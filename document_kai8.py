@@ -7,6 +7,7 @@ import logging
 import pathlib
 import streamlit as st
 from langchain_community.llms import Ollama
+from langchain_community.embeddings import OllamaEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain_community.vectorstores import Chroma
@@ -54,12 +55,6 @@ class AIMessage(Message):
     Represents a message from the AI.
     """
 
-@st.cache_resource
-def load_model():
-    with st.spinner("Downloading Instructor XL Embeddings Model locally....please be patient"):
-        embedding_model = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl", model_kwargs={"device": "cuda"})
-    return embedding_model
-
 class ChatWithFile:
     """
     Main class to handle the interface with the LLM
@@ -72,7 +67,7 @@ class ChatWithFile:
         :param file_path: Full path and name of uploaded file
         :param file_type: File extension determined after upload
         """
-        self.embedding_model = load_model()
+        self.embedding_model = OllamaEmbeddings(model="mxbai-embed-large", base_url="http://localhost:80/api/embeddings/generate")
         self.vectordb = None
         loader = FILE_LOADERS[file_type](file_path=file_path)
         pages = loader.load_and_split()
@@ -90,15 +85,14 @@ class ChatWithFile:
 
     def split_into_chunks(self, pages):
         """
-        Split the document pages into chunks based on similarity
-
-        :return: Result of langchain_experimental.text_splitter.SemanticChunker
+        Split the document pages into chunks based on similarity.
         """
         text_splitter = SemanticChunker(
             embeddings=self.embedding_model,
             breakpoint_threshold_type="percentile"
         )
-        return text_splitter.split_documents(pages)
+        chunks = text_splitter.split_documents(pages)
+        return chunks
 
     def simplify_metadata(self, doc):
         """
@@ -117,7 +111,7 @@ class ChatWithFile:
 
     def store_in_chroma(self, docs):
         """
-        Store each document in Chroma
+        Store each document in Chroma.
 
         :param docs: Result of splitting pages into chunks
         :return: None
