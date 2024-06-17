@@ -7,7 +7,6 @@ import logging
 import pathlib
 import streamlit as st
 from langchain_community.llms import Ollama
-from langchain_community.embeddings import OllamaEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain_community.vectorstores import Chroma
@@ -55,6 +54,11 @@ class AIMessage(Message):
     Represents a message from the AI.
     """
 
+@st.cache_resource
+def load_model():
+    embedding_model = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl", model_kwargs={"device": "cuda"})
+    return embedding_model
+
 class ChatWithFile:
     """
     Main class to handle the interface with the LLM
@@ -67,7 +71,7 @@ class ChatWithFile:
         :param file_path: Full path and name of uploaded file
         :param file_type: File extension determined after upload
         """
-        self.embedding_model = OllamaEmbeddings(model="mxbai-embed-large", base_url="http://localhost:80/api/embeddings/generate")
+        self.embedding_model = load_model()
         self.vectordb = None
         loader = FILE_LOADERS[file_type](file_path=file_path)
         pages = loader.load_and_split()
