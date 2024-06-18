@@ -96,7 +96,6 @@ class ChatWithFile:
     def store_in_chroma(self, docs):
         docs = [self.simplify_metadata(doc) for doc in docs]
         self.vectordb = Chroma.from_documents(docs, embedding=self.embedding_model)
-        self.vectordb.persist()
 
     def initialize_llm_chains(self):
         llm_chains = {}
