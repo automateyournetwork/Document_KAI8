@@ -9,20 +9,10 @@ On Windows you can use WSL2 with Ubuntu and Docker Desktop. Then, inside Docker 
 
 First clone the repository locally 
 
-Then you will need to git clone the Instructor-XL model locally for local free private embeddings. 
-
 ## Git stuff
 
 ```console
 $ git clone https://github.com/automateyournetwork/Document_KAI8.git
-```
-
-# Make sure you have git-lfs installed (https://git-lfs.com)
-
-```console
-$ git lfs install
-
-$ git clone https://huggingface.co/hkunlp/instructor-xl
 ```
 
 ### WSL2 

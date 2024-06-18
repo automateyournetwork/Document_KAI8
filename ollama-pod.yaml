@@ -160,9 +160,9 @@ spec:
     volumeMounts:
     - mountPath: /models
       name: model-storage
-  - name: ollama-mixtral
+  - name: ollama-wizardlm2
     image: ollama/ollama:latest
-    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull mixtral && tail -f /dev/null']
+    command: ['sh', '-c', 'ollama start & sleep 20; ollama pull wizardlm2 && tail -f /dev/null']
     ports:
     - containerPort: 11441
     env:
