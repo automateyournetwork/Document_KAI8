@@ -194,7 +194,7 @@ spec:
       limits:
         memory: "4Gi"
         cpu: "2"
-        nvidia.com/gpu: 1  # Limit to one GPU
+        nvidia.com/gpu: 1  # Limit to one GPU      
   - name: nginx
     image: nginx:latest
     ports:

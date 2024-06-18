@@ -56,8 +56,19 @@ class AIMessage(Message):
 
 @st.cache_resource
 def load_model():
-    embedding_model = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl", model_kwargs={"device": "cuda"})
-    return embedding_model
+    try:
+        with st.spinner("Downloading Instructor XL Embeddings Model locally....please be patient"):
+            embedding_model = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-large", model_kwargs={"device": "cuda"})
+        return embedding_model
+    except Exception as e:
+        st.warning(f"CUDA not available or an error occurred: {e}. Falling back to CPU.")
+        try:
+            with st.spinner("Downloading Instructor XL Embeddings Model locally....please be patient (CPU fallback)"):
+                embedding_model = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-large", model_kwargs={"device": "cpu"})
+            return embedding_model
+        except Exception as e:
+            st.error(f"An error occurred while loading the model on CPU: {e}")
+            return None
 
 class ChatWithFile:
     """

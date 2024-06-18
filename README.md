@@ -7,6 +7,24 @@ This system uses Kubernetes.
 
 On Windows you can use WSL2 with Ubuntu and Docker Desktop. Then, inside Docker Desktop, enable Kubernetes. From there you simply need to apply the YAML configuration files to start Document KAI8 and visit localhost:8501 to start chatting with your documents. 
 
+First clone the repository locally 
+
+Then you will need to git clone the Instructor-XL model locally for local free private embeddings. 
+
+## Git stuff
+
+```console
+$ git clone https://github.com/automateyournetwork/Document_KAI8.git
+```
+
+# Make sure you have git-lfs installed (https://git-lfs.com)
+
+```console
+$ git lfs install
+
+$ git clone https://huggingface.co/hkunlp/instructor-xl
+```
+
 ### WSL2 
 Launch Powershell as admin and type: 
 
