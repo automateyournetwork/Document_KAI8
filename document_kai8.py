@@ -100,7 +100,7 @@ class ChatWithFile:
 
     def initialize_llm_chains(self):
         llm_chains = {}
-        models = ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama"]
+        models = ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat"]
 
         def create_qa_chain(model):
             llm = Ollama(model=model, base_url=f"http://localhost:80/api/{model}/generate")
@@ -113,7 +113,6 @@ class ChatWithFile:
 
         for model in models:
             llm_chains[model] = create_qa_chain(model)
-            time.sleep(5)
         return llm_chains
 
     def send_request(self, model, prompt):
