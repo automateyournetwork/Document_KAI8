@@ -1,7 +1,6 @@
 import os
-import time
-import logging
 import pathlib
+import logging
 import json
 import requests
 import streamlit as st
@@ -99,7 +98,7 @@ class ChatWithFile:
 
     def initialize_llm_chains(self):
         llm_chains = {}
-        models = ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat"]
+        selected_models = st.session_state.selected_models
 
         def create_qa_chain(model):
             llm = Ollama(model=model, base_url=f"http://localhost:80/api/{model}/generate")
@@ -110,8 +109,9 @@ class ChatWithFile:
             )
             return qa_chain
 
-        for model in models:
-            llm_chains[model] = create_qa_chain(model)
+        for model in selected_models:
+            if selected_models[model]:
+                llm_chains[model] = create_qa_chain(model)
         return llm_chains
 
     def send_request(self, model, prompt):
@@ -196,6 +196,36 @@ class ChatWithFile:
         for result in all_results:
             self.conversation_history.append(AIMessage(content=f"Model: {result['model']} - {result['answer']}"))
 
+def model_selection():
+    st.title("Select Models")
+    all_models = ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat"]
+
+    def select_all():
+        for model in all_models:
+            st.session_state.selected_models[model] = True
+
+    def deselect_all():
+        for model in all_models:
+            st.session_state.selected_models[model] = False
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button('Select All Models'):
+            select_all()
+    with col2:
+        if st.button('Deselect All Models'):
+            deselect_all()
+
+    col1, col2, col3 = st.columns(3)
+    for idx, model in enumerate(all_models):
+        col = [col1, col2, col3][idx % 3]
+        with col:
+            st.session_state.selected_models[model] = st.checkbox(model, value=st.session_state.selected_models[model], key=model)
+
+    if st.button('Next'):
+        st.session_state.page = 2
+        st.rerun()
+
 def upload_and_handle_file():
     st.title("Document KAI8 - Multi-AI Chat with Documents")
     uploaded_file = st.file_uploader(
@@ -218,10 +248,9 @@ def upload_and_handle_file():
             st.session_state["file_path"] = csv_pdf_txt_path
             st.session_state["file_type"] = file_type
             st.success(f"{file_type.upper()} file uploaded successfully.")
-            st.button(
-                "Proceed to Chat",
-                on_click=lambda: st.session_state.update({"page": 2})
-            )
+            if st.button("Proceed to Chat"):
+                st.session_state.page = 3
+                st.rerun()
         else:
             st.error(
                 f"Unsupported file type. Please upload a "
@@ -251,8 +280,12 @@ def chat_interface():
 if __name__ == "__main__":
     if "page" not in st.session_state:
         st.session_state["page"] = 1
+    if 'selected_models' not in st.session_state:
+        st.session_state.selected_models = {model: False for model in ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat"]}
 
-    if st.session_state["page"] == 1:
+    if st.session_state.page == 1:
+        model_selection()
+    elif st.session_state.page == 2:
         upload_and_handle_file()
-    elif st.session_state["page"] == 2:
+    elif st.session_state.page == 3:
         chat_interface()
