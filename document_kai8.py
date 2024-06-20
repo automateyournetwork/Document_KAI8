@@ -145,7 +145,7 @@ class ChatWithFile:
                 response = qa_chain.invoke(question)
                 if response:
                     answer_text = response['answer'] if isinstance(response, dict) and 'answer' in response else str(response)
-                    response_placeholders[model].write(f"Model: {model}\nResponse: {answer_text}")
+                    response_placeholders[model].markdown(f"**Model: {model}**\n\nResponse: {answer_text}\n\n---")
                     all_results.append(
                         {
                             "model": model,
@@ -180,6 +180,7 @@ class ChatWithFile:
         for model in self.llm_chains.keys():
             consensus_response = self.send_request(model, consensus_prompt)
             st.write(f"Consensus response from {model}: {consensus_response}")
+            st.markdown("""---""")
             consensus_responses.append(consensus_response)
 
         final_consensus_prompt = (
@@ -190,6 +191,7 @@ class ChatWithFile:
         for model in self.llm_chains.keys():
             final_consensus_response = self.send_request(model, final_consensus_prompt)
             st.write(f"Final consensus response from {model}: {final_consensus_response}")
+            st.markdown("""---""")
             final_consensus_responses.append(final_consensus_response)
 
         self.conversation_history.append(HumanMessage(content=question))
@@ -198,7 +200,7 @@ class ChatWithFile:
 
 def model_selection():
     st.title("Select Models")
-    all_models = ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat"]
+    all_models = ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat", "yi", "falcon2"]
 
     def select_all():
         for model in all_models:
@@ -281,7 +283,7 @@ if __name__ == "__main__":
     if "page" not in st.session_state:
         st.session_state["page"] = 1
     if 'selected_models' not in st.session_state:
-        st.session_state.selected_models = {model: False for model in ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat"]}
+        st.session_state.selected_models = {model: False for model in ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat", "yi", "falcon2"]}
 
     if st.session_state.page == 1:
         model_selection()
