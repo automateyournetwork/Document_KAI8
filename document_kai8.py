@@ -208,7 +208,7 @@ class ChatWithFile:
 
 def model_selection():
     st.title("Select Models")
-    all_models = ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat", "yi", "falcon2"]
+    all_models = ["gemma2", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat", "yi", "falcon2"]
 
     def select_all():
         for model in all_models:
@@ -291,7 +291,7 @@ if __name__ == "__main__":
     if "page" not in st.session_state:
         st.session_state["page"] = 1
     if 'selected_models' not in st.session_state:
-        st.session_state.selected_models = {model: False for model in ["gemma", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat", "yi", "falcon2"]}
+        st.session_state.selected_models = {model: False for model in ["gemma2", "aya", "llama3", "mistral", "wizardlm2", "qwen2", "phi3", "tinyllama", "openchat", "yi", "falcon2"]}
 
     if st.session_state.page == 1:
         model_selection()
